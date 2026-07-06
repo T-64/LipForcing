@@ -1148,3 +1148,180 @@ code{ font-family:var(--font-mono); font-size:0.92em; background:var(--surface-2
      when scrolling horizontally */
   :root{ --vs-cell-w: 280px; }
 }
+
+/* =============================================================================
+   MOBILE RESPONSIVE OVERHAUL (appended)
+   -----------------------------------------------------------------------------
+   HARD RULE: desktop (>=1024px) must stay byte-for-byte identical. Everything
+   below is gated behind max-width media queries (<=720 / <=560 / <=400) or a
+   hover/pointer feature query, OR it targets NEW elements that are
+   display:none by default (.nav-toggle, .swipe-cue, .table-hint) — so on
+   desktop they render nothing and change no layout.
+   ============================================================================= */
+
+/* ---- New mobile-only elements are invisible on desktop ---- */
+.nav-toggle{ display:none; }
+.swipe-cue{ display:none; }
+.table-hint{ display:none; }
+
+/* ---- Hamburger button (appearance only; shown via the <=720 query) ---- */
+.nav-toggle{
+  appearance:none; -webkit-appearance:none;
+  width:44px; height:44px; padding:0; margin-left:auto;
+  align-items:center; justify-content:center;
+  border:1px solid var(--border); border-radius:10px;
+  background:var(--surface); color:var(--text); cursor:pointer;
+  transition:background-color .18s ease, border-color .18s ease;
+}
+.nav-toggle:hover{ border-color:var(--accent); }
+.nav-toggle-bars,
+.nav-toggle-bars::before,
+.nav-toggle-bars::after{
+  display:block; width:20px; height:2px; border-radius:2px;
+  background:var(--text);
+  transition:transform .2s ease, opacity .2s ease, background-color .2s ease;
+}
+.nav-toggle-bars{ position:relative; }
+.nav-toggle-bars::before{ content:""; position:absolute; top:-6px; left:0; }
+.nav-toggle-bars::after{ content:""; position:absolute; top:6px; left:0; }
+.sidebar.nav-open .nav-toggle-bars{ background:transparent; }
+.sidebar.nav-open .nav-toggle-bars::before{ transform:translateY(6px) rotate(45deg); }
+.sidebar.nav-open .nav-toggle-bars::after{ transform:translateY(-6px) rotate(-45deg); }
+
+/* ---- Safety: any (unused) KaTeX display block scrolls instead of overflowing ---- */
+.katex-display{ overflow-x:auto; overflow-y:hidden; max-width:100%; }
+
+/* =====================  <= 720px : phones  ===================== */
+@media (max-width: 720px){
+
+  /* (1) ROOT OVERFLOW FIX.
+     .content grew to its 1220px max-width because .layout uses
+     align-items:flex-start in a column flex, so .content never stretched
+     to the viewport. Stretch it and cap the width — NO overflow:hidden. */
+  .layout{ align-items:stretch; }
+  .content{
+    max-width:100%; width:100%;
+    margin:0;
+    padding:24px 16px 56px;
+    min-width:0;
+  }
+
+  /* (2) STICKY COMPACT TOP BAR + HAMBURGER DRAWER
+     Overrides the older horizontal-wrap sidebar rules above. */
+  .sidebar{
+    position:sticky; top:0; z-index:100;
+    flex-direction:row; align-items:center;
+    width:100%; height:auto;
+    padding:9px 14px;
+    border-right:none; border-bottom:1px solid var(--border);
+    background:rgba(251,250,254,0.92);
+    -webkit-backdrop-filter:saturate(1.4) blur(10px);
+            backdrop-filter:saturate(1.4) blur(10px);
+  }
+  .sidebar-brand{ margin-bottom:0; flex:1 1 auto; }
+  .nav-toggle{ display:inline-flex; }
+
+  /* nav list becomes a dropdown drawer, collapsed by default */
+  .sidebar-nav{
+    position:absolute; top:100%; left:0; right:0;
+    display:none;            /* opened via .sidebar.nav-open */
+    flex-direction:column; flex-wrap:nowrap; gap:2px;
+    padding:8px 12px 12px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    box-shadow:var(--shadow-2);
+    max-height:calc(100vh - 58px); overflow-y:auto;
+  }
+  .sidebar.nav-open .sidebar-nav{ display:flex; }
+  .sidebar-foot{ display:none; }
+
+  .nav-link{
+    display:flex; align-items:center;
+    min-height:44px; padding:10px 14px;          /* >=44px tap target */
+    border-left:2px solid transparent; border-radius:8px;
+  }
+  .nav-link.active{
+    color:var(--accent);
+    background:var(--accent-soft);
+    border-left-color:var(--accent);
+    border-bottom:none; border-radius:8px;       /* undo older bottom-border style */
+  }
+
+  /* anchor targets clear the sticky bar */
+  .sec{ scroll-margin-top:66px; margin-bottom:52px; }
+  .video-hero{ scroll-margin-top:66px; }
+
+  /* (3) HERO / STAT CARDS */
+  .hero{ padding-top:8px; }
+  .hero-title{ overflow-wrap:break-word; }
+  .hero-head{ margin-bottom:20px; }
+  .stat-strip{ grid-template-columns:1fr 1fr; gap:10px; }
+  .stat-num{ font-size:1.9rem; }
+
+  /* (4) FIGURES / TEXT wrap safely */
+  figcaption, .text-block p, .sec-lead, .cap{ overflow-wrap:break-word; }
+
+  /* (5) PREVIEW ROW: cards peek so it reads as swipeable */
+  .preview-cell{ width:82vw; max-width:340px; }
+  .swipe-cue + .cap{ margin-top:6px; }
+
+  /* (6) QUANTITATIVE TABLE — compact + sticky first column.
+     border-collapse:separate is REQUIRED for sticky cells in Chrome; it is
+     scoped to mobile so the desktop collapse layout is untouched. */
+  .results-table{
+    border-collapse:separate; border-spacing:0;
+    min-width:600px; font-size:0.8rem;
+  }
+  .results-table th, .results-table td{ padding:8px 9px; }
+  .results-table .th-left{
+    position:sticky; left:0; z-index:2;
+    padding-left:12px;
+    background:var(--surface);
+    box-shadow:1px 0 0 var(--border);
+  }
+  .results-table thead .th-left{ background:var(--surface-2); z-index:3; }
+  .results-table tbody tr:hover:not(.row-sep) .th-left{ background:var(--surface-2); }
+  .row-gt .th-left{ background:var(--surface); }
+  .row-ours .th-left{ background:var(--accent-soft); }     /* solid so scroll-under is hidden */
+  .table-hint{
+    display:block; text-align:center;
+    font-size:0.78rem; color:var(--text-mute); margin-top:10px;
+  }
+
+  /* (7) TOUCH TARGETS >= 44px */
+  .link-btn{ padding:11px 18px; }
+  .copy-btn{ padding:9px 14px; min-height:44px; }
+  .vs-pick-btn{ min-height:44px; }
+  .vs-zoom-toggle{ min-height:44px; }
+}
+
+/* =====================  <= 560px : small phones  ===================== */
+@media (max-width: 560px){
+  /* Qualitative grid to a single column so each clip is watchable */
+  .video-grid.grid-3{ grid-template-columns:1fr; }
+  /* Keep vs-baselines arrows tappable (older rule shrank them to 38px) */
+  .vs-tset-arrow{ width:44px; height:44px; }
+}
+
+/* =====================  < 380px : very small phones  ===================== */
+@media (max-width: 379px){
+  .stat-strip{ grid-template-columns:1fr; }
+}
+
+/* =====================  TOUCH devices (no hover)  ===================== */
+@media (hover: none){
+  /* Preview row: native scroll-snap replaces the desktop hover-pan */
+  .preview-scroll{ scroll-snap-type:x mandatory; }
+  .preview-cell{ scroll-snap-align:center; }
+
+  /* Visible swipe cue under the preview row */
+  .swipe-cue{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin:10px auto 0;
+    color:var(--accent-strong);
+    font-size:0.8rem; font-weight:600; letter-spacing:0.02em;
+    opacity:0.9;
+    transition:opacity .3s ease;
+  }
+  .swipe-cue svg{ opacity:0.8; }
+}

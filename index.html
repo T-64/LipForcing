@@ -6,6 +6,17 @@
 <title>Lip Forcing — Few-Step Autoregressive Diffusion for Real-time Lip Synchronization</title>
 <meta name="description" content="Lip Forcing: the first autoregressive diffusion model for V2V lip synchronization. 31 FPS real-time on a single GPU.">
 
+<!-- Open Graph / Twitter card -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lip Forcing — Few-Step Autoregressive Diffusion for Real-time Lip Synchronization">
+<meta property="og:description" content="The first autoregressive diffusion model for V2V lip synchronization. 31 FPS real-time on a single GPU.">
+<meta property="og:image" content="https://cvlab-kaist.github.io/LipForcing/assets/teaser.png">
+<meta property="og:url" content="https://cvlab-kaist.github.io/LipForcing/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lip Forcing — Few-Step Autoregressive Diffusion for Real-time Lip Synchronization">
+<meta name="twitter:description" content="The first autoregressive diffusion model for V2V lip synchronization. 31 FPS real-time on a single GPU.">
+<meta name="twitter:image" content="https://cvlab-kaist.github.io/LipForcing/assets/teaser.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500;8..60,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,8 +37,13 @@
     <div class="sidebar-brand">
       <span class="brand-mark">LF</span>
       <span class="brand-name">Lip Forcing</span>
+      <!-- Mobile-only: hamburger toggle for the nav drawer (hidden on desktop) -->
+      <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation menu"
+              aria-expanded="false" aria-controls="sidebar-nav">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+      </button>
     </div>
-    <nav class="sidebar-nav">
+    <nav class="sidebar-nav" id="sidebar-nav">
       <a href="#hero" class="nav-link" data-section="hero">Overview</a>
       <a href="#preview" class="nav-link" data-section="preview">Preview</a>
       <a href="#motivation" class="nav-link" data-section="motivation">Motivation</a>
@@ -134,33 +150,38 @@
       <div class="preview-scroll" role="region" aria-label="Lip Forcing output preview row, scroll horizontally">
         <div class="preview-track">
           <figure class="preview-cell">
-            <video src="videos/preview/01.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/01.mp4" poster="posters/preview/01.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
           <figure class="preview-cell">
-            <video src="videos/preview/02.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/02.mp4" poster="posters/preview/02.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
           <figure class="preview-cell">
-            <video src="videos/preview/03.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/03.mp4" poster="posters/preview/03.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
           <figure class="preview-cell">
-            <video src="videos/preview/04.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/04.mp4" poster="posters/preview/04.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
           <figure class="preview-cell">
-            <video src="videos/preview/05.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/05.mp4" poster="posters/preview/05.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
           <figure class="preview-cell">
-            <video src="videos/preview/06.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/06.mp4" poster="posters/preview/06.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
           <figure class="preview-cell">
-            <video src="videos/preview/07.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/07.mp4" poster="posters/preview/07.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
           <figure class="preview-cell">
-            <video src="videos/preview/08.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/08.mp4" poster="posters/preview/08.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
           <figure class="preview-cell">
-            <video src="videos/preview/09.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/preview/09.mp4" poster="posters/preview/09.jpg" controls preload="none" muted loop playsinline></video>
           </figure>
         </div>
+      </div>
+      <div class="swipe-cue" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <span>Swipe</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </div>
       <p class="cap">
         Nine outputs from <strong>Lip Forcing (14B)</strong> on TalkVid. Hover near the left or right edge to pan the row.
@@ -369,22 +390,22 @@
 
       <div class="video-grid grid-3" id="qual-ours-grid">
         <figure class="video-frame video-landscape">
-          <video src="videos/qual_ours/01.mp4" controls preload="metadata" muted loop playsinline></video>
+          <video src="videos/qual_ours/01.mp4" poster="posters/qual_ours/01.jpg" controls preload="none" muted loop playsinline></video>
         </figure>
         <figure class="video-frame video-landscape">
-          <video src="videos/qual_ours/02.mp4" controls preload="metadata" muted loop playsinline></video>
+          <video src="videos/qual_ours/02.mp4" poster="posters/qual_ours/02.jpg" controls preload="none" muted loop playsinline></video>
         </figure>
         <figure class="video-frame video-landscape">
-          <video src="videos/qual_ours/03.mp4" controls preload="metadata" muted loop playsinline></video>
+          <video src="videos/qual_ours/03.mp4" poster="posters/qual_ours/03.jpg" controls preload="none" muted loop playsinline></video>
         </figure>
         <figure class="video-frame video-landscape">
-          <video src="videos/qual_ours/04.mp4" controls preload="metadata" muted loop playsinline></video>
+          <video src="videos/qual_ours/04.mp4" poster="posters/qual_ours/04.jpg" controls preload="none" muted loop playsinline></video>
         </figure>
         <figure class="video-frame video-landscape">
-          <video src="videos/qual_ours/05.mp4" controls preload="metadata" muted loop playsinline></video>
+          <video src="videos/qual_ours/05.mp4" poster="posters/qual_ours/05.jpg" controls preload="none" muted loop playsinline></video>
         </figure>
         <figure class="video-frame video-landscape">
-          <video src="videos/qual_ours/06.mp4" controls preload="metadata" muted loop playsinline></video>
+          <video src="videos/qual_ours/06.mp4" poster="posters/qual_ours/06.jpg" controls preload="none" muted loop playsinline></video>
         </figure>
       </div>
       <p class="cap">
@@ -443,81 +464,81 @@
         <!-- =============== TALKVID =============== -->
         <div class="vs-grid-panel" data-testset="talkvid" data-row="1">
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/talkvid/row1/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row1/input.mp4" poster="posters/vs/talkvid/row1/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/talkvid/row1/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row1/ours.mp4" poster="posters/vs/talkvid/row1/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row1/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row1/wav2lip.mp4" poster="posters/vs/talkvid/row1/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row1/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row1/videoretalking.mp4" poster="posters/vs/talkvid/row1/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row1/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row1/musetalk.mp4" poster="posters/vs/talkvid/row1/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row1/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row1/latentsync.mp4" poster="posters/vs/talkvid/row1/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>
 
         <div class="vs-grid-panel" data-testset="talkvid" data-row="2" hidden>
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/talkvid/row2/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row2/input.mp4" poster="posters/vs/talkvid/row2/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/talkvid/row2/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row2/ours.mp4" poster="posters/vs/talkvid/row2/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row2/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row2/wav2lip.mp4" poster="posters/vs/talkvid/row2/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row2/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row2/videoretalking.mp4" poster="posters/vs/talkvid/row2/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row2/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row2/musetalk.mp4" poster="posters/vs/talkvid/row2/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row2/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row2/latentsync.mp4" poster="posters/vs/talkvid/row2/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>
 
         <div class="vs-grid-panel" data-testset="talkvid" data-row="3" hidden>
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/talkvid/row3/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row3/input.mp4" poster="posters/vs/talkvid/row3/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/talkvid/row3/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row3/ours.mp4" poster="posters/vs/talkvid/row3/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row3/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row3/wav2lip.mp4" poster="posters/vs/talkvid/row3/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row3/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row3/videoretalking.mp4" poster="posters/vs/talkvid/row3/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row3/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row3/musetalk.mp4" poster="posters/vs/talkvid/row3/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/talkvid/row3/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/talkvid/row3/latentsync.mp4" poster="posters/vs/talkvid/row3/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>
@@ -525,81 +546,81 @@
         <!-- =============== HDTF =============== -->
         <div class="vs-grid-panel" data-testset="hdtf" data-row="1" hidden>
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/hdtf/row1/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row1/input.mp4" poster="posters/vs/hdtf/row1/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/hdtf/row1/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row1/ours.mp4" poster="posters/vs/hdtf/row1/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row1/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row1/wav2lip.mp4" poster="posters/vs/hdtf/row1/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row1/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row1/videoretalking.mp4" poster="posters/vs/hdtf/row1/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row1/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row1/musetalk.mp4" poster="posters/vs/hdtf/row1/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row1/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row1/latentsync.mp4" poster="posters/vs/hdtf/row1/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>
 
         <div class="vs-grid-panel" data-testset="hdtf" data-row="2" hidden>
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/hdtf/row2/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row2/input.mp4" poster="posters/vs/hdtf/row2/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/hdtf/row2/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row2/ours.mp4" poster="posters/vs/hdtf/row2/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row2/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row2/wav2lip.mp4" poster="posters/vs/hdtf/row2/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row2/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row2/videoretalking.mp4" poster="posters/vs/hdtf/row2/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row2/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row2/musetalk.mp4" poster="posters/vs/hdtf/row2/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row2/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row2/latentsync.mp4" poster="posters/vs/hdtf/row2/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>
 
         <div class="vs-grid-panel" data-testset="hdtf" data-row="3" hidden>
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/hdtf/row3/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row3/input.mp4" poster="posters/vs/hdtf/row3/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/hdtf/row3/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row3/ours.mp4" poster="posters/vs/hdtf/row3/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row3/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row3/wav2lip.mp4" poster="posters/vs/hdtf/row3/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row3/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row3/videoretalking.mp4" poster="posters/vs/hdtf/row3/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row3/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row3/musetalk.mp4" poster="posters/vs/hdtf/row3/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hdtf/row3/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hdtf/row3/latentsync.mp4" poster="posters/vs/hdtf/row3/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>
@@ -607,81 +628,81 @@
         <!-- =============== HALLO3 =============== -->
         <div class="vs-grid-panel" data-testset="hallo3" data-row="1" hidden>
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/hallo3/row1/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row1/input.mp4" poster="posters/vs/hallo3/row1/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/hallo3/row1/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row1/ours.mp4" poster="posters/vs/hallo3/row1/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row1/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row1/wav2lip.mp4" poster="posters/vs/hallo3/row1/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row1/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row1/videoretalking.mp4" poster="posters/vs/hallo3/row1/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row1/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row1/musetalk.mp4" poster="posters/vs/hallo3/row1/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row1/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row1/latentsync.mp4" poster="posters/vs/hallo3/row1/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>
 
         <div class="vs-grid-panel" data-testset="hallo3" data-row="2" hidden>
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/hallo3/row2/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row2/input.mp4" poster="posters/vs/hallo3/row2/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/hallo3/row2/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row2/ours.mp4" poster="posters/vs/hallo3/row2/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row2/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row2/wav2lip.mp4" poster="posters/vs/hallo3/row2/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row2/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row2/videoretalking.mp4" poster="posters/vs/hallo3/row2/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row2/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row2/musetalk.mp4" poster="posters/vs/hallo3/row2/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row2/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row2/latentsync.mp4" poster="posters/vs/hallo3/row2/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>
 
         <div class="vs-grid-panel" data-testset="hallo3" data-row="3" hidden>
           <figure class="vs-cell vs-input">
-            <video src="videos/vs/hallo3/row3/input.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row3/input.mp4" poster="posters/vs/hallo3/row3/input.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Input</figcaption>
           </figure>
           <figure class="vs-cell vs-cell-ours">
-            <video src="videos/vs/hallo3/row3/ours.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row3/ours.mp4" poster="posters/vs/hallo3/row3/ours.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Ours (Lip Forcing)</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row3/wav2lip.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row3/wav2lip.mp4" poster="posters/vs/hallo3/row3/wav2lip.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>Wav2Lip</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row3/videoretalking.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row3/videoretalking.mp4" poster="posters/vs/hallo3/row3/videoretalking.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>VideoReTalking</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row3/musetalk.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row3/musetalk.mp4" poster="posters/vs/hallo3/row3/musetalk.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>MuseTalk</figcaption>
           </figure>
           <figure class="vs-cell">
-            <video src="videos/vs/hallo3/row3/latentsync.mp4" controls preload="metadata" muted loop playsinline></video>
+            <video src="videos/vs/hallo3/row3/latentsync.mp4" poster="posters/vs/hallo3/row3/latentsync.jpg" controls preload="none" muted loop playsinline></video>
             <figcaption>LatentSync</figcaption>
           </figure>
         </div>

@@ -546,4 +546,64 @@
       }
     });
   }
+
+  // ---------- Mobile nav: hamburger toggle for the sidebar drawer ----------
+  const navToggle = document.getElementById('nav-toggle');
+  const sidebar   = document.querySelector('.sidebar');
+  if(navToggle && sidebar){
+    const setOpen = (open) => {
+      sidebar.classList.toggle('nav-open', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+      navToggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    };
+    navToggle.addEventListener('click', () => setOpen(!sidebar.classList.contains('nav-open')));
+    // Close after picking a destination
+    sidebar.querySelectorAll('.nav-link').forEach(a => {
+      a.addEventListener('click', () => setOpen(false));
+    });
+    // Close on Escape or on tap outside the sidebar
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && sidebar.classList.contains('nav-open')) setOpen(false);
+    });
+    document.addEventListener('click', (e) => {
+      if(sidebar.classList.contains('nav-open') && !sidebar.contains(e.target)) setOpen(false);
+    });
+  }
+
+  // ---------- Table: mobile "swipe →" hint (auto-hides once scrolled) ----------
+  const tableWrap = document.querySelector('.table-wrap');
+  if(tableWrap){
+    const hint = document.createElement('p');
+    hint.className = 'table-hint';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.textContent = 'Swipe the table sideways to see all metrics →';
+    tableWrap.after(hint);
+    tableWrap.addEventListener('scroll', () => {
+      hint.style.opacity = '0';
+    }, { once: true, passive: true });
+  }
+
+  // ---------- Preview: hide the swipe cue once the user has swiped ----------
+  const swipeCue = document.querySelector('.swipe-cue');
+  if(previewScroll && swipeCue){
+    previewScroll.addEventListener('scroll', () => {
+      swipeCue.style.opacity = '0';
+    }, { once: true, passive: true });
+  }
+
+  // ---------- Video performance: pause clips once they scroll out of view ----------
+  // Combined with preload="none" + poster on every <video>, this keeps mobile
+  // from decoding videos the user can't see. Videos start on tap (no autoplay),
+  // so this only pauses; it never force-plays.
+  if('IntersectionObserver' in window){
+    const vidObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(!e.isIntersecting){
+          const v = e.target;
+          if(!v.paused){ try{ v.pause(); }catch(err){} }
+        }
+      });
+    }, { threshold: 0.01 });
+    document.querySelectorAll('video').forEach(v => vidObserver.observe(v));
+  }
 })();
