@@ -604,6 +604,22 @@
         }
       });
     }, { threshold: 0.01 });
-    document.querySelectorAll('video').forEach(v => vidObserver.observe(v));
+    // vs-panel videos are excluded: their playback is synchronized, so pausing
+    // one (e.g. the first cell scrolling out of a stacked single-column panel)
+    // would propagate a pause to the whole group mid-comparison. Instead the
+    // panel is observed as a unit below.
+    document.querySelectorAll('video').forEach(v => {
+      if(!v.closest('.vs-grid-panel')) vidObserver.observe(v);
+    });
+    const panelObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(!e.isIntersecting){
+          e.target.querySelectorAll('video').forEach(v => {
+            if(!v.paused){ try{ v.pause(); }catch(err){} }
+          });
+        }
+      });
+    }, { threshold: 0 });
+    gridPanels.forEach(p => panelObserver.observe(p));
   }
 })();
