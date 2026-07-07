@@ -1,0 +1,57 @@
+# Lip Forcing runtime dependencies (pip install -e .)
+
+# --- core ---
+torch>=2.6.0
+torchvision
+torchaudio
+numpy<2.0.0
+scipy
+
+# --- diffusion / model stack ---
+diffusers==0.35.1
+transformers==4.49.0
+safetensors
+peft
+einops
+omegaconf
+attrs
+hydra-core
+
+# --- video / image ---
+pillow
+opencv-python-headless
+imageio
+imageio-ffmpeg
+kornia
+
+nvidia-ml-py  # GPU stats during training (torch.cuda.utilization)
+
+# --- audio ---
+librosa
+soundfile
+python_speech_features
+
+# --- face detection / alignment (LatentSync) ---
+insightface
+onnxruntime  # CPU build; install onnxruntime-gpu instead for GPU face detection
+
+# --- logging / utils / io ---
+loguru
+tqdm
+wandb[media]
+ftfy
+regex
+pyyaml
+packaging
+psutil
+requests
+pandas
+typing_extensions
+boto3            # optional: S3 checkpoint storage
+
+# --- optional, multi-GPU sequence-parallel (Ulysses) inference only ---
+# Install manually if needed; guarded by `if use_usp:` at runtime.
+# flash-attn
+# xfuser
+# yunchang
+# sageattention
