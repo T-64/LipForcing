@@ -888,17 +888,40 @@ def preprocess_with_latentsync(video_path, image_processor, face_detection_cache
             # Reset temporal smoothing bias for new video
             image_processor.restorer.p_bias = None
 
+            # Robustness: reuse the last good detection for brief detection blips
+            # (motion blur, head turn, momentary occlusion) instead of aborting the
+            # whole clip on a handful of frames. The face barely moves over a few
+            # frames, so reusing the previous alignment/crop is visually
+            # imperceptible. Only hard-fail when there is no reference yet, or the
+            # gap is long enough (>=60 consecutive frames, ~2s) to be a real loss.
+            consecutive_fail = 0
+            reused = 0
+            last_good = None  # (face, box, affine_matrix)
             for i, frame in enumerate(frames):
                 try:
                     face, box, affine_matrix = image_processor.affine_transform(frame)
                     boxes.append(box)
                     affine_matrices.append(affine_matrix)
                     aligned_faces.append(face)
+                    last_good = (face, box, affine_matrix)
+                    consecutive_fail = 0
                 except RuntimeError as e:
-                    print(f"[LatentSync] Face detection failed for frame {i}: {e}")
-                    boxes.append(None)
-                    affine_matrices.append(None)
-                    detection_failures.append(i)
+                    consecutive_fail += 1
+                    if last_good is not None and consecutive_fail < 60:
+                        gf, gb, ga = last_good
+                        boxes.append(gb)
+                        affine_matrices.append(ga)
+                        aligned_faces.append(gf)
+                        reused += 1
+                    else:
+                        print(f"[LatentSync] Face detection failed for frame {i}: {e}")
+                        boxes.append(None)
+                        affine_matrices.append(None)
+                        detection_failures.append(i)
+
+            if reused:
+                print(f"[LatentSync] Reused last-good face for {reused} frames "
+                      f"(brief detection blips)")
 
             if detection_failures:
                 print(f"[LatentSync] Face detection failed for {len(detection_failures)} frames, skipping")
@@ -934,7 +957,8 @@ def preprocess_with_latentsync(video_path, image_processor, face_detection_cache
 
 
 def composite_with_latentsync_float(generated_float, latentsync_metadata, image_processor,
-                                     use_mouth_only_compositing=False, frame_offset=0):
+                                     use_mouth_only_compositing=False, frame_offset=0,
+                                     occlusion_masker=None):
     """Composite generated faces back onto original video, staying in float space.
 
     Keeps the model output in float space (no uint8 quantization) before
@@ -943,6 +967,10 @@ def composite_with_latentsync_float(generated_float, latentsync_metadata, image_
     Args:
         generated_float: [T, C, H, W] float tensor in [0, 1]
         frame_offset: offset into the metadata arrays (for per-chunk streaming)
+        occlusion_masker: optional OcclusionMasker instance. When provided, runs
+            face parsing on the original frames covered by this batch and uses
+            the per-frame skin mask to protect occluding objects (hands,
+            billboards, cloth) from being overwritten by the generated face.
     """
     import torchvision.transforms.functional as TF_v
 
@@ -969,6 +997,25 @@ def composite_with_latentsync_float(generated_float, latentsync_metadata, image_
     affine_matrices = latentsync_metadata["affine_matrices"]
     detection_failures = latentsync_metadata.get("detection_failures", [])
     aligned_faces = latentsync_metadata.get("aligned_faces", None)
+
+    skin_masks_aligned = None
+    if occlusion_masker is not None:
+        # Run BiSeNet on the aligned face crops (its training distribution).
+        # We warp the resulting mask back to the original frame per-crop below.
+        num_out = int(generated_float.shape[0])
+        gi_lo = int(frame_offset)
+        gi_hi = min(gi_lo + num_out, len(original_frames))
+        if gi_hi > gi_lo and aligned_faces is not None:
+            aligned_batch = []
+            for gi in range(gi_lo, gi_hi):
+                af = aligned_faces[gi]
+                if isinstance(af, torch.Tensor):
+                    af_np = af.permute(1, 2, 0).cpu().numpy().astype(np.uint8)
+                else:
+                    af_np = np.asarray(af, dtype=np.uint8)
+                aligned_batch.append(af_np)
+            aligned_batch = np.stack(aligned_batch, axis=0)
+            skin_masks_aligned = occlusion_masker.compute_aligned(aligned_batch)
 
     composite_frames = []
 
@@ -997,9 +1044,27 @@ def composite_with_latentsync_float(generated_float, latentsync_metadata, image_
 
         face_resized = face_resized * 2.0 - 1.0
 
+        ext_mask = None
+        if skin_masks_aligned is not None:
+            aligned_mask = skin_masks_aligned[i]
+            # face_resized is in the AlignRestore crop space (face_size), so
+            # first resize the mask to that space, then let restore_img invert
+            # the same affine.
+            m_resized = cv2.resize(
+                aligned_mask,
+                (image_processor.restorer.face_size[0],
+                 image_processor.restorer.face_size[1]),
+                interpolation=cv2.INTER_LINEAR,
+            )
+            H_orig, W_orig = original_frames[gi].shape[:2]
+            ext_mask = occlusion_masker.warp_to_original(
+                m_resized, affine_matrices[gi], (H_orig, W_orig),
+            )
+
         try:
             restored_frame = image_processor.restorer.restore_img(
-                original_frames[gi], face_resized, affine_matrices[gi]
+                original_frames[gi], face_resized, affine_matrices[gi],
+                external_mask=ext_mask,
             )
             composite_frames.append(restored_frame)
         except Exception as e:

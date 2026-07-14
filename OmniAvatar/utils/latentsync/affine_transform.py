@@ -42,11 +42,18 @@ class AlignRestore(object):
         cropped_face = rearrange(cropped_face.squeeze(0), "c h w -> h w c").cpu().numpy().astype(np.uint8)
         return cropped_face, affine_matrix
 
-    def restore_img(self, input_img, face, affine_matrix):
+    def restore_img(self, input_img, face, affine_matrix, external_mask=None):
         """Inverse-warp composited face back onto original frame with soft blending.
 
         Uses float32 for all intermediate computation to avoid color shifts from
         float16 rounding (float16 cannot exactly represent all uint8 values 0-255).
+
+        Args:
+            external_mask: optional np.ndarray [H, W] float32 in [0, 1] in the
+                *original frame* coordinate space. Where 0, the original pixel
+                is fully kept (occlusion protection); where 1, blending follows
+                the geometric soft mask as before. Multiplied into the final
+                blend weight.
         """
         h, w, _ = input_img.shape
         # Use float32 for compositing precision regardless of self.dtype
@@ -94,6 +101,17 @@ class AlignRestore(object):
         inv_soft_mask = kornia.filters.gaussian_blur2d(
             inv_mask_center, (blur_size, blur_size), (sigma, sigma)
         ).squeeze(0)
+
+        if external_mask is not None:
+            ext = external_mask
+            if isinstance(ext, np.ndarray):
+                ext = torch.from_numpy(ext)
+            ext = ext.to(device=self.device, dtype=work_dtype)
+            if ext.dim() == 2:
+                ext = ext.unsqueeze(0)  # [1, H, W]
+            # Broadcast-multiply into the soft mask so occluded pixels keep original.
+            inv_soft_mask = inv_soft_mask * ext
+
         inv_soft_mask_3d = inv_soft_mask.expand_as(inv_face)
         img_back = inv_soft_mask_3d * pasted_face + (1 - inv_soft_mask_3d) * input_img
 

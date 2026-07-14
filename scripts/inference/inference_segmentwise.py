@@ -133,6 +133,14 @@ def parse_args():
     parser.add_argument("--save_aligned", action="store_true",
                         help="Additionally save the raw generated 512x512 aligned face "
                              "video as <output>_aligned.mp4 (before compositing).")
+    parser.add_argument("--occlusion_aware", action="store_true",
+                        help="Run BiSeNet face parsing on original frames to build a "
+                             "per-pixel skin mask; occluding objects (hand, billboard, "
+                             "cloth) in front of the face are preserved instead of "
+                             "being overwritten by the generated face.")
+    parser.add_argument("--face_parsing_ckpt", type=str, default=None,
+                        help="Path to BiSeNet 79999_iter.pth. Defaults to bundled "
+                             "OmniAvatar/utils/face_parsing/79999_iter.pth.")
 
     parser.add_argument("--t_list", type=float, nargs="+",
                         default=[0.999, 0.769, 0.0],
@@ -442,6 +450,17 @@ def main():
     if use_preprocessing:
         image_processor = load_image_processor(args.mask_path, device)
 
+    # Occlusion masker (optional) — loaded once and reused across samples.
+    occlusion_masker = None
+    if args.occlusion_aware:
+        if not use_preprocessing:
+            raise ValueError("--occlusion_aware requires paste-back (do not pass --skip_preprocessing).")
+        from OmniAvatar.utils.latentsync.occlusion_mask import OcclusionMasker
+        print("Loading BiSeNet face parser for occlusion-aware compositing ...")
+        occlusion_masker = OcclusionMasker(
+            weight_path=args.face_parsing_ckpt, device=device,
+        )
+
     # ===================================================================
     # Optional torch.compile wrapping (compile time absorbed by warmup)
     # ===================================================================
@@ -574,6 +593,7 @@ def main():
                 composited_np = composite_with_latentsync_float(
                     generated_float.cpu(), latentsync_metadata, image_processor,
                     use_mouth_only_compositing=not args.composite_full_face,
+                    occlusion_masker=occlusion_masker,
                 )
 
                 # Save composited video (original resolution) with audio

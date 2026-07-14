@@ -196,3 +196,12 @@ outputs/
 *.vscode/
 # run debug artifacts
 logs/
+
+# local-only: corporate proxy (internal), bench media/logs, scratch artifacts
+proxy.env
+runs/
+/bench/*.mp4
+/bench/*.txt
+/test_ref.mp4
+/test_speech.wav
+/bench_audio_10s.wav
